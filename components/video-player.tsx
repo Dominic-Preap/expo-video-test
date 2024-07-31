@@ -50,6 +50,10 @@ export default function VideoScreen() {
     player.play();
   });
 
+  function onMuted(muted: boolean) {
+    player.muted = muted;
+  }
+
   function onChangeVideoQuality(source: string) {
     const ct = player.currentTime;
     player.replace(source);
@@ -58,7 +62,11 @@ export default function VideoScreen() {
 
   useEffect(() => {
     const subscription = player.addListener("playingChange", (isPlaying) => {
-      setIsPlaying(isPlaying);
+      console.log("playingChange", isPlaying);
+
+      if (typeof isPlaying === "boolean") {
+        setIsPlaying(isPlaying);
+      }
     });
 
     return () => {
@@ -87,6 +95,12 @@ export default function VideoScreen() {
             setIsPlaying(!isPlaying);
           }}
         />
+        <Button
+          title={player.muted ? "Unmute" : "Mute"}
+          onPress={() => {
+            player.muted = !player.muted;
+          }}
+        />
         {videoSources.map((x) => (
           <Button
             title={x.label}
@@ -113,7 +127,7 @@ const styles = StyleSheet.create({
   controlsContainer: {
     flexDirection: "row",
     gap: 8,
-    flexWrap: 'wrap',
+    flexWrap: "wrap",
     padding: 10,
   },
 });
